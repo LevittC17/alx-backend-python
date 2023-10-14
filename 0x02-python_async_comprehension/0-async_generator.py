@@ -9,7 +9,7 @@ and 10
 
 import asyncio
 import random
-
+from typing import AsyncGenerator
 
 async def async_generator() -> AsyncGenerator[float, None]:
     '''An asynchronous generator that yields random
