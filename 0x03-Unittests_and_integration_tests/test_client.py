@@ -104,13 +104,16 @@ class TestGithubOrgClient(unittest.TestCase):
             repo: Input repository with a license key
             license_key: License key to check
             expected_result: Expected
+            expected_result: Expected result of has_license
+        Return:
+            None
         """
         test_class = GithubOrgClient('test')
 
         # Call the has_license method
         result = test_class.has_license(repo, license_key)
 
-        # Assert that result matches the expected value
+        # Assert that the result matches the expected value
         self.assertEqual(result, expected_result)
 
 
