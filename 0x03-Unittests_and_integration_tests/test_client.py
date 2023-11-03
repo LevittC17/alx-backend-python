@@ -14,6 +14,7 @@ from client import GithubOrgClient
 
 
 class TestGithubOrgClient(unittest.TestCase):
+    """Test methods defined here"""
     @parameterized.expand([
         ("google",),
         ("abc",),
@@ -70,7 +71,6 @@ class TestGithubOrgClient(unittest.TestCase):
           mock_get_json (MagicMock): Mock object for get_json
         Return: None
         """
-        # Mock _public_repos_url to return a custom URL
         mock_public_repos_url.return_value = "hello/world"
 
         # Mock get_json to return a custom payload
