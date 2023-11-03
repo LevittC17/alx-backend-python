@@ -8,8 +8,9 @@ with the expected argument
 
 
 import unittest
-from parameterized import parameterized
+from parameterized import parameterized, parameterized_class
 from unittest.mock import patch, PropertyMock, call
+from fixtures import TEST_PAYLOAD
 from client import GithubOrgClient
 
 
@@ -115,6 +116,49 @@ class TestGithubOrgClient(unittest.TestCase):
 
         # Assert that the result matches the expected value
         self.assertEqual(result, expected_result)
+
+
+@parameterized_class(('org_payload', 'repos_payload', 'expected_repos',
+                     'apache2_repos'), TEST_PAYLOAD)
+class TestIntegrationGithubOrgClient(unittest.TestCase):
+    """Test integration for GithubOrgClient method"""
+    @classmethod
+    def setUpClass(cls, org_payload, repos_payload, expected_repos,
+                   apache2_repos):
+        """Mock external requests usinf patch"""
+        cls.get_patcher = patch('requests.get')
+        cls.mock_get = cls.get_patcher.start()
+
+        # Set up the side effect for mock_get to return fixtures
+        # based on the url
+        cls.mock_get.side_effect = [
+            mock_response(org_payload),
+            mock_response(repos_payload),
+            mock_response(apache2_payload)
+        ]
+
+        @classmethod
+        def tearDownClass(cls):
+            """Stop the patcher in tearDownClass"""
+            cls.get_patcher.stop()
+
+        def test_public_repos(self):
+            """Integration test for GithubOrgClient.public_repos
+            method"""
+            # Create an instance of GithubOrgClient
+            test_class = GithubOrgClient('testorg')
+
+            # Call the public_repos method
+            repos = test_class.public_repos()
+
+            # Assert that list of repos matches expected value
+            self.assertEqual(repos, expected_repos)
+
+    def mock_response(payload):
+        """Mock a response with the specified payload"""
+        response = unittest.mock.Mock()
+        response.json.return_value = payload
+        return response
 
 
 if __name__ == "__main__":
