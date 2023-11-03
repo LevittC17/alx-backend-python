@@ -154,6 +154,21 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
             # Assert that list of repos matches expected value
             self.assertEqual(repos, expected_repos)
 
+        def test_public_repos_with_license(self):
+            """
+            Integration test for GithubOrgClient.public_repos method
+            with license argument
+            """
+            # Create an instance of GithubOrgClient
+            test_class = GithubOrgClient('testorg')
+
+            # Call the public_repos method with license arrgument
+            repos = test_class.public_repos(license='apache-2.0')
+
+            # Assert that list of repos matches expected value for
+            # the specified license
+            self.assertEqual(repos, apache2_repos)
+
     def mock_response(payload):
         """Mock a response with the specified payload"""
         response = unittest.mock.Mock()
