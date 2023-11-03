@@ -9,7 +9,7 @@ with the expected argument
 
 import unittest
 from parameterized import parameterized
-from unittest.mock import patch, PropertyMock
+from unittest.mock import patch, PropertyMock, call
 from client import GithubOrgClient
 
 
@@ -58,6 +58,40 @@ class TestGithubOrgClient(unittest.TestCase):
 
             # Assert that the result matches the payload value
             self.assertEqual(result, payload["repos_url"])
+
+    @patch('client.get_json')
+    @patch('client.GithubOrgClient._public_repos_url',
+           new_callable=PropertyMock)
+    def test_public_repos(self, mock_public_repos_url, mock_get_json):
+        """
+        Test the GithubOrgClient.public_repos method
+        Args:
+          repos_url (PropertyMock): Mock _public_repos_url
+          mock_get_json (MagicMock): Mock object for get_json
+        Return: None
+        """
+        # Mock _public_repos_url to return a custom URL
+        mock_public_repos_url.return_value = "hello/world"
+
+        # Mock get_json to return a custom payload
+        mock_get_json.return_value = [
+            {"name": "Google"},
+            {"name": "Twitter"}
+        ]
+
+        # Create an instance of GithubOrgClient
+        test_class = GithubOrgClient('test')
+
+        # Call the public_repos method
+        result = test_class.public_repos()
+
+        # Assert that the list of repos matches the expected value
+        expected_repos = ["Google", "Twitter"]
+        self.assertEqual(result, expected_repos)
+
+        # Assert that the mocked property and get_json were called once
+        mock_public_repos_url.assert_called_once()
+        mock_get_json.assert_called_once()
 
 
 if __name__ == "__main__":
