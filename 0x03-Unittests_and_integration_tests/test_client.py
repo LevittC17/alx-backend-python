@@ -9,7 +9,7 @@ with the expected argument
 
 import unittest
 from parameterized import parameterized
-from unittest.mock import patch
+from unittest.mock import patch, PropertyMock
 from client import GithubOrgClient
 
 
@@ -35,6 +35,30 @@ class TestGithubOrgClient(unittest.TestCase):
         mock_get_json.assert_called_once_with(
             f"https://api.github.com/orgs/{org_name}")
 
+    def test_public_repos_url(self):
+        """
+        Test GithubOrgClient.public_repos_url property
+        Args:
+            mock_org (MagicMock): Mock object for org method
+        Returns: None
+        """
+        with patch('client.GithubOrgClient.org',
+                   new_callable=PropertyMock) as mock_org:
+            # Create a payload dictionary
+            payload = {"repos_url": "World"}
+
+            # Set return value of the property to the payload
+            mock_org.return_value = payload
+
+            # Create an instance of GithubOrgClient
+            client = GithubOrgClient('test')
+
+            # Get the _public_repos_url property
+            result = client._public_repos_url
+
+            # Assert that the result matches the payload value
+            self.assertEqual(result, payload["repos_url"])
+
 
 if __name__ == "__main__":
-    unitest.main()
+    unittest.main()
