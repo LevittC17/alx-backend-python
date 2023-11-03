@@ -7,6 +7,7 @@ from utils import access_nested_map
 from utils import get_json
 from utils import memoize
 
+
 class TestAccessNestedMap(unittest.TestCase):
     """
     A test class for the access_nested_map function
@@ -67,12 +68,15 @@ class TestGetJson(unittest.TestCase):
 
 class TestMemoize(unittest.TestCase):
     def test_memoize(self):
+        """Test the @memoize decorator"""
         class TestClass:
+            """Define a class for Testing"""
             def a_method(self):
                 return 42
 
             @memoize
             def a_property(self):
+                """Memoize decorator"""
                 return self.a_method()
 
         # Mock the a_method using patch
